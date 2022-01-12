@@ -1,0 +1,55 @@
+:host {
+  .home-component {
+    padding: 10px;
+  }
+  .fix {
+    width: 600px;
+  }
+
+  form {
+    align-items: center;
+  }
+
+  .fee {
+    color: #3f51b5;
+    margin-top: 10px;
+  }
+
+  .info {
+    color: green;
+    margin-top: 10px;
+  }
+
+  .connect {
+    color: orangered;
+    margin-top: 10px;
+  }
+
+  .tx {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .encode {
+    color: blue;
+    font-size: 12px;
+    word-break: break-all;
+    button {
+      font-size: 10px;
+    }
+  }
+
+  .token-creation {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 2rem;
+  }
+
+  @media (max-width: 800px) {
+    .fix {
+      width: 80vw;
+    }
+  }
+}

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace LaunchpadApp
 {
-    public class PresaleService :  IHostedService, IDisposable
+    public class PresaleService : IHostedService, IDisposable
     {
         private int executionCount = 0;
         private readonly IConfiguration config;
@@ -25,17 +25,18 @@ namespace LaunchpadApp
         public static Dictionary<BigInteger, PresalesOutputDTO> presales = new Dictionary<BigInteger, PresalesOutputDTO>();
         private Web3 web3;
         private HexBigInteger filterPeriodic;
+        private HexBigInteger filterPeriodicLaunched;
 
         public PresaleService(IConfiguration config)
         {
             this.config = config;
         }
-       
+
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             string apiKey = config.GetValue<string>("apiKey");
-             web3 = new Web3($"https://bsc.getblock.io/testnet/?api_key={apiKey}");
+            web3 = new Web3($"https://bsc.getblock.io/testnet/?api_key={apiKey}");
 
             var presaleCountHandler = web3.Eth.GetContractQueryHandler<PresalesCountFunction>();
             var count = await presaleCountHandler.QueryAsync<BigInteger>(contractAddress, new PresalesCountFunction());
@@ -45,6 +46,7 @@ namespace LaunchpadApp
                 await GetPresale(web3, i);
             }
 
+            // poc can be simplify
             var transferEventHandler = web3.Eth.GetEvent<PresaleCreatedEventDTO>(contractAddress);
             var filterAllTransferEventsForContract = transferEventHandler.CreateFilterInput();
             filterPeriodic = await transferEventHandler.CreateFilterAsync(filterAllTransferEventsForContract);
@@ -55,11 +57,24 @@ namespace LaunchpadApp
                 await GetPresale(web3, item);
             }
 
+            var launchedEvent = web3.Eth.GetEvent<PresaleLaunchedEventDTO>(contractAddress);
+            var filterAllLaunchedEventsForContract = launchedEvent.CreateFilterInput();
+            filterPeriodicLaunched = await launchedEvent.CreateFilterAsync(filterAllLaunchedEventsForContract);
+            var presaleLaunched = await launchedEvent.GetFilterChangesAsync(filterPeriodic);
+            for (int i = 0; i < presaleLaunched.Count; i++)
+            {
+                BigInteger item = presaleLaunched[i].Event.PresaleId;
+                if (presales.ContainsKey(item))
+                {
+                    presales[item].Status = 2;
+                }
+            }
+
 
             _timer = new Timer(async (e) => { await DoWork(e); }, null, TimeSpan.Zero,
                 TimeSpan.FromMinutes(1));
 
-            
+
         }
 
         private async Task DoWork(object state)
@@ -67,12 +82,22 @@ namespace LaunchpadApp
             var count = Interlocked.Increment(ref executionCount);
 
             var transferEventHandler = web3.Eth.GetEvent<PresaleCreatedEventDTO>(contractAddress);
-            var filterAllTransferEventsForContract = transferEventHandler.CreateFilterInput();
             var presaleCreated = await transferEventHandler.GetFilterChangesAsync(filterPeriodic);
             for (int i = 0; i < presaleCreated.Count; i++)
             {
                 BigInteger item = presaleCreated[i].Event.PresaleId;
                 await GetPresale(web3, item);
+            }
+
+            var launchedEvent = web3.Eth.GetEvent<PresaleLaunchedEventDTO>(contractAddress);
+            var presaleLaunched = await launchedEvent.GetFilterChangesAsync(filterPeriodicLaunched);
+            for (int i = 0; i < presaleLaunched.Count; i++)
+            {
+                BigInteger item = presaleLaunched[i].Event.PresaleId;
+                if (presales.ContainsKey(item))
+                {
+                    presales[item].Status = 2;
+                }
             }
 
         }

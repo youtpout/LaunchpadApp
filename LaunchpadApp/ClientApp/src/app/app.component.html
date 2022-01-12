@@ -1,6 +1,54 @@
-<body>
-  <app-nav-menu></app-nav-menu>
-  <div class="container">
-    <router-outlet></router-outlet>
-  </div>
-</body>
+<div class="example-container">
+  <mat-toolbar color="primary">
+    <button mat-button class="menu-button" (click)="sidenav.toggle()">
+      <mat-icon>{{ isMenuOpen ? "menu_open" : "menu" }}</mat-icon>
+    </button>
+    <span class="menu-link" [routerLink]="['/']">
+      <mat-icon>token</mat-icon>
+      Presales
+    </span>
+    <span class="menu-link" [routerLink]="['/tokens']">
+      <mat-icon>generating_tokens</mat-icon> Create presale
+    </span>
+    <span class="example-spacer"></span>
+    <span class="network">{{ isProd ? "Mainnet" : "Testnet" }}</span>
+    <span *ngIf="account" style="font-size: 12px; margin-right: 5px">{{
+      account
+    }}</span>
+    <button
+      *ngIf="!account"
+      mat-button
+      mat-raised-button
+      color="accent"
+      (click)="connect()"
+    >
+      Connect
+    </button>
+  </mat-toolbar>
+  <mat-progress-bar
+    mode="indeterminate"
+    color="warn"
+    *ngIf="loading"
+  ></mat-progress-bar>
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      #sidenav
+      autoFocus="false"
+      mode="over"
+      [(opened)]="isMenuOpen"
+      class="sidenav"
+      (click)="isMenuOpen = false"
+    >
+      <a mat-button routerLink="/"> <mat-icon>token</mat-icon> Presales </a>
+      <a mat-button routerLink="/tokens">
+        <mat-icon>generating_tokens</mat-icon> Create presales
+      </a>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+<!-- <button (click)="withdraw()">Withdraw</button> -->

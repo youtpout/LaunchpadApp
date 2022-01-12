@@ -1,0 +1,69 @@
+<mat-card class="nft-card mat-elevation-z8">
+  <mat-card-header>
+    <div mat-card-avatar class="nft-header-image"></div>
+    <mat-card-title>Presale {{token.id}} </mat-card-title>
+    <mat-card-subtitle>Owner <span style="font-size:12px" [ngStyle]="{'color': isOwner? 'green':'black'}"> {{ token.owner }}</span></mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="sell-info">
+      <span class="address">
+        <b>Address</b> : {{ token.tokenAddress }}
+        <button [cdkCopyToClipboard]="token.address"
+                color="primary"
+                mat-button
+                mat-icon-button>
+          <mat-icon>file_copy</mat-icon>
+        </button>
+      </span>
+      <span>
+        <b>Amount</b> : {{ token.tokenAmount }}
+      </span>
+      <span>
+        <b>By BNB</b> : {{ token.tokenByBNB }}
+      </span>
+      <span>
+        <b>amount min</b> : {{ token.amountMin }}
+      </span>
+      <span>
+        <b>amount max</b> : {{ token.amountMax }}
+      </span>
+      <span>
+        <b>actual cap</b> : {{ token.softCap }}
+      </span>
+      <span>
+        <b>soft cap</b> : {{ token.softCap }}
+      </span>
+      <span>
+        <b>hard cap</b> : {{ token.hardCap }}
+      </span>
+      <span>
+        <b>status</b> :
+        <ng-container [ngSwitch]="token.status">
+          <span style="color:orange" *ngSwitchCase="0">
+            Creation
+          </span>
+          <span style="color:red" *ngSwitchCase="1">
+            Cancelled
+          </span>
+          <span style="color:green" *ngSwitchCase="2">
+            Launched
+          </span>
+          <ng-container *ngSwitchCase="3">
+            Finished
+          </ng-container>
+          <ng-container *ngSwitchCase="4">
+            NotFilled
+          </ng-container>
+        </ng-container>
+      </span>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button (click)="info()" color="primary" mat-button mat-raised-button>
+      See token on BscScan
+    </button>
+    <button *ngIf="token.status==0" (click)="launch()" color="accent" mat-button mat-raised-button>
+      Launch
+    </button>
+  </mat-card-actions>
+</mat-card>

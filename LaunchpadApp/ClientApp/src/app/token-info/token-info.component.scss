@@ -1,0 +1,64 @@
+:host {
+  .nft-card {
+    width: 450px;
+    margin: 10px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    position: relative;
+  }
+
+  .nft-header-image {
+    background-image: url("/assets/binance.png");
+    background-size: cover;
+  }
+
+  .mat-card-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .end {
+    color: red;
+  }
+
+  .sell-info {
+    flex: 1;
+    color: #3f51b5;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    b {
+      color: black;
+      font-weight: normal;
+    }
+  }
+
+  .sell-btn {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .price {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  .address {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  @media (max-width: 800px) {
+    .nft-card {
+      width: 80vw;
+    }
+  }
+}
